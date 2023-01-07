@@ -25,15 +25,33 @@ export const addPost = catchAsyncError(async (req, res, next) => {
 });
 
 export const deletePost = catchAsyncError(async (req, res, next) => {
-    const _id = req.user._id;
-  
-    const user = await User.findOne({ _id });
-    if (!user) return next(new ErrorHandler("User not found", 404));
-    
-    const post_id = req.params.id;
+  const _id = req.user._id;
 
-    await Post.deleteOne({ _id: post_id });
-    res.status(200).json({
-      success: true,
-    });
+  const user = await User.findOne({ _id });
+  if (!user) return next(new ErrorHandler("User not found", 404));
+
+  const post_id = req.params.id;
+
+  await Post.deleteOne({ _id: post_id });
+  res.status(200).json({
+    success: true,
   });
+});
+
+export const likePost = catchAsyncError(async (req, res, next) => {
+  const _id = req.user._id;
+  const user = await User.findOne({ _id });
+  if (!user) return next(new ErrorHandler("User not found", 404));
+
+  const post_id = req.params.id;
+
+  const post = await Post.findOne({_id: post_id});
+  if (!post) return next(new ErrorHandler("Post not found", 404));
+
+  post.likes.push(user);
+  await post.save();
+  
+  res.status(200).json({
+    success: true,
+  });
+});
