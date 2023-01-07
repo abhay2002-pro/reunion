@@ -1,6 +1,7 @@
 import { catchAsyncError } from "../middlewares/catchAsyncError.js";
 import { User } from "../models/User.js";
 import { Post } from "../models/Post.js";
+import { Comment } from "../models/Comment.js";
 import ErrorHandler from "../utils/errorHandler.js";
 
 export const addPost = catchAsyncError(async (req, res, next) => {
@@ -74,5 +75,26 @@ export const dislikePost = catchAsyncError(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
+  });
+});
+
+export const addComment = catchAsyncError(async (req, res, next) => {
+  const _id = req.user._id;
+  const user = await User.findOne({ _id });
+  if (!user) return next(new ErrorHandler("User not found", 404));
+
+  const post_id = req.params.id;
+
+  const post = await Post.findOne({ _id: post_id });
+  if (!post) return next(new ErrorHandler("Post not found", 404));
+
+  const description = req.body.description;
+  const comment = await Comment.create({user, description});
+
+  post.comments.push(comment);
+  await post.save();
+  res.status(200).json({
+    success: true,
+    comment_id: comment.id,
   });
 });
