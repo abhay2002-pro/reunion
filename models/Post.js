@@ -9,7 +9,7 @@ const schema = new mongoose.Schema({
     type: String,
     max: 250,
   },
-  username: {
+  user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
