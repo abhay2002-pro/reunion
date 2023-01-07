@@ -12,7 +12,7 @@ export const addPost = catchAsyncError(async (req, res, next) => {
   const title = req.body.title;
   const description = req.body.description;
 
-  const post = await Post.create({ title, description });
+  const post = await Post.create({ title, description, user });
   res.status(200).json({
     success: true,
     post_details: {
@@ -23,3 +23,17 @@ export const addPost = catchAsyncError(async (req, res, next) => {
     },
   });
 });
+
+export const deletePost = catchAsyncError(async (req, res, next) => {
+    const _id = req.user._id;
+  
+    const user = await User.findOne({ _id });
+    if (!user) return next(new ErrorHandler("User not found", 404));
+    
+    const post_id = req.params.id;
+
+    await Post.deleteOne({ _id: post_id });
+    res.status(200).json({
+      success: true,
+    });
+  });
