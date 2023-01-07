@@ -1,6 +1,5 @@
 import { catchAsyncError } from "../middlewares/catchAsyncError.js";
 import { User } from "../models/User.js";
-import { Post } from "../models/Post.js";
 import ErrorHandler from "../utils/errorHandler.js";
 
 export const login = catchAsyncError(async (req, res, next) => {
@@ -88,27 +87,6 @@ export const getUser = catchAsyncError(async (req, res, next) => {
       name: user.username,
       followers: user.followers.length,
       followings: user.followings.length,
-    }
-  });
-});
-
-export const addPost = catchAsyncError(async (req, res, next) => {
-  const _id = req.user._id;
-
-  const user = await User.findOne({ _id });
-  if (!user) return next(new ErrorHandler("User not found", 404));
-
-  const title = req.body.title
-  const description = req.body.description
-
-  const post = await Post.create({title, description});
-  res.status(200).json({
-    success: true,
-    post_details: {
-      post_id: post._id,
-      title: post.title,
-      description: post.description,
-      created_at: post.createdAt.toISOString(),
     }
   });
 });
