@@ -67,7 +67,7 @@ export const dislikePost = catchAsyncError(async (req, res, next) => {
   if (!post) return next(new ErrorHandler("Post not found", 404));
 
   post.likes = post.likes.filter((curr_user) => {
-    return curr_user !== user._id;
+    return curr_user === user._id;
   });
 
   await post.save();
