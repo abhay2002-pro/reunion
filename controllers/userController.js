@@ -73,3 +73,20 @@ export const unfollow = catchAsyncError(async (req, res, next) => {
     success: true,
   });
 });
+
+export const getUser = catchAsyncError(async (req, res, next) => {
+  const _id = req.user._id;
+
+  const user = await User.findOne({ _id });
+  if (!user) return next(new ErrorHandler("User not found", 404));
+
+  
+  res.status(200).json({
+    success: true,
+    user_details: {
+      name: user.username,
+      followers: user.followers.length,
+      followings: user.followings.length,
+    }
+  });
+});
