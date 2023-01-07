@@ -7,6 +7,6 @@ const router = express.Router();
 router.route("/posts").post(isAuthenticated, addPost);
 router.route("/posts/:id").delete(isAuthenticated, deletePost);
 router.route("/like/:id").post(isAuthenticated, likePost);
-router.route("/dislike/:id").post(isAuthenticated, dislikePost);
+router.route("/unlike/:id").post(isAuthenticated, dislikePost);
 
 export default router;
