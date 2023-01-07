@@ -22,3 +22,54 @@ export const login = catchAsyncError(async (req, res, next) => {
     jwt_token: accessToken,
   });
 });
+
+export const follow = catchAsyncError(async (req, res, next) => {
+  const _id = req.user._id;
+  const follower_id = req.params.id;
+
+  const user = await User.findOne({ _id });
+  if (!user) return next(new ErrorHandler("Logged in user not found", 404));
+
+  const follower_user = await User.findOne({ _id: follower_id });
+  if (!follower_user)
+    return next(new ErrorHandler("User requested to follow not found", 404));
+
+  follower_user.followers.push(follower_id);
+  user.followings.push(_id);
+
+  await user.save();
+  await follower_user.save();
+
+  res.status(200).json({
+    success: true,
+  });
+});
+
+export const unfollow = catchAsyncError(async (req, res, next) => {
+  const _id = req.user._id;
+  const follower_id = req.params.id;
+
+  const user = await User.findOne({ _id });
+  if (!user) return next(new ErrorHandler("Logged in user not found", 404));
+
+  const follower_user = await User.findOne({ _id: follower_id });
+  if (!follower_user)
+    return next(new ErrorHandler("User requested to unfollow not found", 404));
+
+  follower_user.followers = follower_user.followers.filter(
+    (curr_follower_id) => {
+      return curr_follower_id !== follower_id;
+    }
+  );
+
+  user.followings = user.followings.filter((curr_user_id) => {
+    return curr_user_id !== _id;
+  });
+
+  await user.save();
+  await follower_user.save();
+
+  res.status(200).json({
+    success: true,
+  });
+});
