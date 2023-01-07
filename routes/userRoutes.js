@@ -1,7 +1,8 @@
 import express from "express";
 
-import {} from "../controllers/userController.js";
+import {login} from "../controllers/userController.js";
 
 const router = express.Router();
 
+router.route('/authenticate').post(login);
 export default router;
