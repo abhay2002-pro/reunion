@@ -121,8 +121,26 @@ export const getAllPostsByUser = catchAsyncError(async (req, res, next) => {
   const user = await User.findOne({ _id });
   if (!user) return next(new ErrorHandler("User not found", 404));
 
-  const posts = await Post.findOne({user});
+  let posts = await Post.find({ user });
 
+  posts = await Promise.all(
+    posts.map(async (post) => {
+      let comments = await Promise.all(
+        post.comments.map(async (_id) => {
+          const comment = await Comment.findOne({ _id });
+          return comment.description;
+        })
+      );
+      return {
+        id: post._id,
+        title: post.title,
+        desc: post.description,
+        created_at: post.createdAt.toISOString(),
+        likes: post.likes.length,
+        comments,
+      };
+    })
+  );
   res.status(200).json({
     success: true,
     posts,
