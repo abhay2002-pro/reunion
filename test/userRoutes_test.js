@@ -39,7 +39,8 @@ let inputs = [
     email: "abhay1@gmail.com",
     password: "Abhay@123",
     message: "Incorrect Email",
-  }, {
+  },
+  {
     describeText: "invalid password",
     email: "abhay@gmail.com",
     password: "Abhay123",
@@ -48,7 +49,7 @@ let inputs = [
 ];
 
 inputs.forEach((input) => {
-  describe(`POST User authentication with ${input.describeText}`, () => {
+  describe(`POST user authentication with ${input.describeText}`, () => {
     it("logging in the user", (done) => {
       chai
         .request(API)
@@ -73,21 +74,21 @@ inputs.forEach((input) => {
 // Follow user
 inputs = [
   {
-    testcase_description: "Successful follow user check",
+    testcase_description: "successful follow user check",
     follow_id: "63b97922215c8ab4f721aecf",
     statusCode: 200,
     success: true,
     message: "User followed successfully",
   },
   {
-    testcase_description: "Follow user with invalid id",
+    testcase_description: "follow user with invalid id",
     follow_id: "63b97922215c8ab4f721aec",
     statusCode: 404,
     success: false,
     message: "Invalid Follow ID",
   },
   {
-    testcase_description: "Follow user with valid id but not present in DB",
+    testcase_description: "follow user with valid id but not present in DB",
     follow_id: "63bac7be0de18dde5f73f1eb",
     statusCode: 404,
     success: false,
@@ -118,19 +119,20 @@ inputs.forEach((input) => {
 // Unfollow user
 inputs = [
   {
-    testcase_description: "Successful unfollow user check",
+    testcase_description: "successful unfollow user check",
     follow_id: "63b97922215c8ab4f721aecf",
     statusCode: 200,
     success: true,
     message: "User unfollowed successfully",
   },
   {
-    testcase_description: "Unfollow user with invalid id",
+    testcase_description: "unfollow user with invalid id",
     follow_id: "63b97922215c8ab4f721aec",
     statusCode: 404,
     success: false,
     message: "Invalid Follow ID",
-  },{
+  },
+  {
     testcase_description: "Unfollow user with valid id but not present in DB",
     follow_id: "63bac7be0de18dde5f73f1eb",
     statusCode: 404,
@@ -156,5 +158,24 @@ inputs.forEach((input) => {
           done();
         });
     });
+  });
+});
+
+// Get user profile
+describe("Get user profile successful check", () => {
+  it("getting user profile", (done) => {
+    chai
+      .request(API)
+      .get("/api/user")
+      .set("Authorization", "Bearer " + process.env.SAMPLE_TOKEN)
+      .end((err, res) => {
+        res.should.have.status(200);
+        res.body.should.be.a("object");
+        res.body.should.be.have.property("success");
+        res.body.success.should.equal(true);
+        res.body.should.be.have.property("user_details");
+        res.body.user_details.should.be.a("object");
+        done();
+      });
   });
 });
