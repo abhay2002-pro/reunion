@@ -89,7 +89,7 @@ export const addComment = catchAsyncError(async (req, res, next) => {
   if (!post) return next(new ErrorHandler("Post not found", 404));
 
   const description = req.body.description;
-  const comment = await Comment.create({user, description});
+  const comment = await Comment.create({ user, description });
 
   post.comments.push(comment);
   await post.save();
@@ -100,19 +100,31 @@ export const addComment = catchAsyncError(async (req, res, next) => {
 });
 
 export const getSinglePost = catchAsyncError(async (req, res, next) => {
-    const post_id = req.params.id;
-  
-    const post = await Post.findOne({ _id: post_id });
-    if (!post) return next(new ErrorHandler("Post not found", 404));
+  const post_id = req.params.id;
 
-    res.status(200).json({
-      success: true,
-      post_details: {
-        title: post.title,
-        description: post.description,
-        likes: post.likes.length,
-        comments: post.comments.length
-      }
-    });
+  const post = await Post.findOne({ _id: post_id });
+  if (!post) return next(new ErrorHandler("Post not found", 404));
+
+  res.status(200).json({
+    success: true,
+    post_details: {
+      title: post.title,
+      description: post.description,
+      likes: post.likes.length,
+      comments: post.comments.length,
+    },
   });
-  
+});
+
+export const getAllPostsByUser = catchAsyncError(async (req, res, next) => {
+  const _id = req.user._id;
+  const user = await User.findOne({ _id });
+  if (!user) return next(new ErrorHandler("User not found", 404));
+
+  const posts = await Post.findOne({user});
+
+  res.status(200).json({
+    success: true,
+    posts,
+  });
+});
