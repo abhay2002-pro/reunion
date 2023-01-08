@@ -61,11 +61,14 @@ export const likePost = catchAsyncError(async (req, res, next) => {
   const post = await Post.findOne({ _id: post_id });
   if (!post) return next(new ErrorHandler("Post not found", 404));
 
+  if(post.likes.includes(user._id)) return next(new ErrorHandler("Post already liked by user", 404));
+
   post.likes.push(user);
   await post.save();
 
   res.status(200).json({
     success: true,
+    message: "Post liked successfully",
   });
 });
 
