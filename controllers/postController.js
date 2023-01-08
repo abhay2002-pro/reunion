@@ -37,7 +37,9 @@ export const deletePost = catchAsyncError(async (req, res, next) => {
 
   if(!post_id) return next(new ErrorHandler("Post id is missing", 404));
 
-  const post = await Post.findOne({ _id });
+  if (!post_id.match(/^[0-9a-fA-F]{24}$/)) return next(new ErrorHandler("Post id is invalid", 404));
+
+  const post = await Post.findOne({ _id: post_id });
   if (!post) return next(new ErrorHandler("Post id is invalid", 404));
 
   await Post.deleteOne({ _id: post_id });
