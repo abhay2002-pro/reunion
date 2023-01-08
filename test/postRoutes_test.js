@@ -1,0 +1,73 @@
+import chai from "chai";
+import chaiHttp from "chai-http";
+import { config } from "dotenv";
+const should = chai.should();
+
+config({
+  path: "./config/config.env",
+});
+
+const API = process.env.BASE_URL;
+chai.use(chaiHttp);
+
+let testcases = [
+  {
+    describeText: "Post creating post with title field missing",
+    title: "",
+    description: "test post description",
+    message: "Title can't be empty",
+  },
+  {
+    describeText: "Post creating post with description field missing",
+    title: "test post",
+    description: "",
+    message: "Description can't be empty",
+  },
+];
+
+// Create post
+describe("Post successful creation check", () => {
+  it("adding post", (done) => {
+    chai
+      .request(API)
+      .post("/api/posts")
+      .set("Authorization", "Bearer " + process.env.SAMPLE_TOKEN)
+      .send({
+        title: "test post",
+        description: "this is my test post",
+      })
+      .end((err, res) => {
+        res.should.have.status(201);
+        res.body.should.be.a("object");
+        res.body.should.be.have.property("success");
+        res.body.success.should.equal(true);
+        res.body.should.be.have.property("post_details");
+        res.body.post_details.should.be.a("object");
+        done();
+      });
+  });
+});
+
+testcases.forEach((testcase) => {
+  describe(`${testcase.describeText}`, () => {
+    it("adding post", (done) => {
+      chai
+        .request(API)
+        .post("/api/posts")
+        .set("Authorization", "Bearer " + process.env.SAMPLE_TOKEN)
+        .send({
+          title: testcase.title,
+          description: testcase.description,
+        })
+        .end((err, res) => {
+          res.should.have.status(404);
+          res.body.should.be.a("object");
+          res.body.should.be.have.property("success");
+          res.body.success.should.equal(false);
+          res.body.should.be.have.property("message");
+          res.body.message.should.equal(testcase.message);
+          done();
+        });
+    });
+  });
+});
