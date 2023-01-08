@@ -11,7 +11,8 @@ const API = process.env.BASE_URL;
 console.log(API)
 chai.use(chaiHttp);
 
-describe("/POST testing user authentication", () => {
+// User authentication
+describe("/POST Successful user authentication check", () => {
   it("logging in the user", (done) => {
     chai.request(API).post("/api/authenticate").send({
       email: "abhay@gmail.com",
@@ -29,19 +30,19 @@ describe("/POST testing user authentication", () => {
 });
 
 let inputs = [{
-  describeText: "with invalid password",
+  describeText: "invalid password",
   email: "abhay@gmail.com",
   password: "Abhay123",
   message: "Incorrect Password"
 }, {
-  describeText: "with invalid email",
+  describeText: "invalid email",
   email: "abhay1@gmail.com",
   password: "Abhay@123",
   message: "Incorrect Email"
 }]
 
 inputs.forEach((input)=>{
-  describe(`/POST testing user authentication ${input.describeText}`, () => {
+  describe(`POST User authentication with ${input.describeText}`, () => {
     it("logging in the user", (done) => {
       chai.request(API).post("/api/authenticate").send({
         email: input.email,
