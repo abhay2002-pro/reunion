@@ -98,3 +98,21 @@ export const addComment = catchAsyncError(async (req, res, next) => {
     comment_id: comment.id,
   });
 });
+
+export const getSinglePost = catchAsyncError(async (req, res, next) => {
+    const post_id = req.params.id;
+  
+    const post = await Post.findOne({ _id: post_id });
+    if (!post) return next(new ErrorHandler("Post not found", 404));
+
+    res.status(200).json({
+      success: true,
+      post_details: {
+        title: post.title,
+        description: post.description,
+        likes: post.likes.length,
+        comments: post.comments.length
+      }
+    });
+  });
+  
