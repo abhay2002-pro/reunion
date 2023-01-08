@@ -76,17 +76,24 @@ testcases.forEach((testcase) => {
 testcases = [
   {
     describeText: "Delete successful deletion check",
-    postId: "63b993ab5337fe2ba2597f87",
+    postId: "63b99a15b1175dc7c933c0a8",
     statusCode: 200,
     success: true,
     message: "Post deleted successfully",
   },
   {
-    describeText: "Delete successful deletion check",
-    postId:"63badfd6cdd3d63abba9b57",
+    describeText: "Delete deletion with invalid post id",
+    postId:"63b99a15b1175dc7c933c0",
     statusCode: 404,
     success: false,
     message: "Post id is invalid",
+  },
+  {
+    describeText: "Delete deletion with valid post id but not present in DB",
+    postId:"63b99a15b1175dc7c933c0a8",
+    statusCode: 404,
+    success: false,
+    message: "Post not found",
   },
 ];
 testcases.forEach((testcase) => {
