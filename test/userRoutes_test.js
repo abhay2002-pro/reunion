@@ -80,11 +80,18 @@ inputs = [
     message: "User followed successfully",
   },
   {
-    testcase_description: "Follow user without id",
+    testcase_description: "Follow user with invalid id",
     follow_id: "63b97922215c8ab4f721aec",
     statusCode: 404,
     success: false,
     message: "Invalid Follow ID",
+  },
+  {
+    testcase_description: "Follow user with valid id but not present in DB",
+    follow_id: "63bac7be0de18dde5f73f1eb",
+    statusCode: 404,
+    success: false,
+    message: "User requested to follow not found",
   },
 ];
 
@@ -118,11 +125,17 @@ inputs = [
     message: "User unfollowed successfully",
   },
   {
-    testcase_description: "Follow user without id",
+    testcase_description: "Unfollow user with invalid id",
     follow_id: "63b97922215c8ab4f721aec",
     statusCode: 404,
     success: false,
     message: "Invalid Follow ID",
+  },{
+    testcase_description: "Unfollow user with valid id but not present in DB",
+    follow_id: "63bac7be0de18dde5f73f1eb",
+    statusCode: 404,
+    success: false,
+    message: "User requested to unfollow not found",
   },
 ];
 
