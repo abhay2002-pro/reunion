@@ -249,7 +249,8 @@ testcases = [
     message: "Post id is invalid",
   },
   {
-    describeText: "Post add comment with valid post id which is not present in DB",
+    describeText:
+      "Post add comment with valid post id which is not present in DB",
     postId: "63bacccd4d480a739c139347",
     description: "this is my comment's description",
     statusCode: 404,
@@ -287,3 +288,53 @@ testcases.forEach((testcase) => {
     });
   });
 });
+
+// Get post details of a specific post
+describe(`Get post details successfully`, () => {
+  it("getting post", (done) => {
+    chai
+      .request(API)
+      .get(`/api/posts/63badda97dee347e2f2b07dc`)
+      .set("Authorization", "Bearer " + process.env.SAMPLE_TOKEN)
+      .end((err, res) => {
+        res.should.have.status(200);
+        res.body.should.be.a("object");
+        res.body.should.be.have.property("success");
+        res.body.success.should.equal(true);
+        res.body.should.be.have.property("post_details");
+        res.body.post_details.should.be.a("object");
+        done();
+      });
+  });
+});
+
+testcases = [{
+    describe: "Get post details with invalid id",
+    postId: "63badda97dee347e2f2b07d",
+    message: "Post id is invalid",
+}, {
+    describe: "Get post details with valid id but not present in DB",
+    postId: "63bacccd4d480a739c139347",
+    message: "Post not found",
+}]
+
+testcases.map((testcase)=>{
+    console.log(testcase)
+    describe(`${testcase.describe}`, () => {
+        it("getting post", (done) => {
+          chai
+            .request(API)
+            .get(`/api/posts/${testcase.postId}`)
+            .set("Authorization", "Bearer " + process.env.SAMPLE_TOKEN)
+            .end((err, res) => {
+              res.should.have.status(404);
+              res.body.should.be.a("object");
+              res.body.should.be.have.property("success");
+              res.body.success.should.equal(false);
+              res.body.should.be.have.property("message");
+              res.body.message.should.equal(testcase.message);
+              done();
+            });
+        });
+      });      
+})

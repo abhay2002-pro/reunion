@@ -79,8 +79,12 @@ export const dislikePost = catchAsyncError(async (req, res, next) => {
 
   const post_id = req.params.id;
 
+  if (!post_id.match(/^[0-9a-fA-F]{24}$/)) return next(new ErrorHandler("Post id is invalid", 404));
+
   const post = await Post.findOne({ _id: post_id });
   if (!post) return next(new ErrorHandler("Post not found", 404));
+
+  if(!post.likes.includes(user._id)) return next(new ErrorHandler("Post is not liked by the user", 404));
 
   post.likes = post.likes.filter((curr_user) => {
     return curr_user === user._id;
@@ -90,6 +94,7 @@ export const dislikePost = catchAsyncError(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
+    message: "Post unliked successfully",
   });
 });
 
@@ -100,15 +105,20 @@ export const addComment = catchAsyncError(async (req, res, next) => {
 
   const post_id = req.params.id;
 
+  if (!post_id.match(/^[0-9a-fA-F]{24}$/)) return next(new ErrorHandler("Post id is invalid", 404));
+
   const post = await Post.findOne({ _id: post_id });
   if (!post) return next(new ErrorHandler("Post not found", 404));
 
   const description = req.body.description;
+
+  if(!description) return next(new ErrorHandler("Comment can't be empty", 404));
+
   const comment = await Comment.create({ user, description });
 
   post.comments.push(comment);
   await post.save();
-  res.status(200).json({
+  res.status(201).json({
     success: true,
     comment_id: comment.id,
   });
@@ -116,6 +126,8 @@ export const addComment = catchAsyncError(async (req, res, next) => {
 
 export const getSinglePost = catchAsyncError(async (req, res, next) => {
   const post_id = req.params.id;
+
+  if (!post_id.match(/^[0-9a-fA-F]{24}$/)) return next(new ErrorHandler("Post id is invalid", 404));
 
   const post = await Post.findOne({ _id: post_id });
   if (!post) return next(new ErrorHandler("Post not found", 404));
