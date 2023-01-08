@@ -83,14 +83,14 @@ testcases = [
   },
   {
     describeText: "Delete deletion with invalid post id",
-    postId:"63b99a15b1175dc7c933c0",
+    postId: "63b99a15b1175dc7c933c0",
     statusCode: 404,
     success: false,
     message: "Post id is invalid",
   },
   {
     describeText: "Delete deletion with valid post id but not present in DB",
-    postId:"63b99a15b1175dc7c933c0a8",
+    postId: "63b99a15b1175dc7c933c0a8",
     statusCode: 404,
     success: false,
     message: "Post not found",
@@ -205,6 +205,76 @@ testcases.forEach((testcase) => {
         .request(API)
         .post(`/api/unlike/${testcase.postId}`)
         .set("Authorization", "Bearer " + process.env.SAMPLE_TOKEN)
+        .end((err, res) => {
+          res.should.have.status(testcase.statusCode);
+          res.body.should.be.a("object");
+          res.body.should.be.have.property("success");
+          res.body.success.should.equal(testcase.success);
+          res.body.should.be.have.property("message");
+          res.body.message.should.equal(testcase.message);
+          done();
+        });
+    });
+  });
+});
+
+// Add a comment
+describe(`Post sucessfully add comment to a post check`, () => {
+  it("adding comment", (done) => {
+    chai
+      .request(API)
+      .post(`/api/comment/63badda97dee347e2f2b07dc`)
+      .set("Authorization", "Bearer " + process.env.SAMPLE_TOKEN)
+      .send({
+        description: "this is my comment's description",
+      })
+      .end((err, res) => {
+        res.should.have.status(201);
+        res.body.should.be.a("object");
+        res.body.should.be.have.property("success");
+        res.body.success.should.equal(true);
+        res.body.should.be.have.property("comment_id");
+        res.body.comment_id.should.be.a("string");
+        done();
+      });
+  });
+});
+testcases = [
+  {
+    describeText: "Post add comment with invalid post id",
+    postId: "63badda97dee347e2f2b07d",
+    description: "this is my comment's description",
+    statusCode: 404,
+    success: false,
+    message: "Post id is invalid",
+  },
+  {
+    describeText: "Post add comment with valid post id which is not present in DB",
+    postId: "63bacccd4d480a739c139347",
+    description: "this is my comment's description",
+    statusCode: 404,
+    success: false,
+    message: "Post not found",
+  },
+  {
+    describeText: "Post add comment with empty input",
+    postId: "63bace15513f5cf0d718a6fd",
+    description: "",
+    statusCode: 404,
+    success: false,
+    message: "Comment can't be empty",
+  },
+];
+testcases.forEach((testcase) => {
+  describe(`${testcase.describeText}`, () => {
+    it("adding comment", (done) => {
+      chai
+        .request(API)
+        .post(`/api/comment/${testcase.postId}`)
+        .set("Authorization", "Bearer " + process.env.SAMPLE_TOKEN)
+        .send({
+          description: "",
+        })
         .end((err, res) => {
           res.should.have.status(testcase.statusCode);
           res.body.should.be.a("object");
