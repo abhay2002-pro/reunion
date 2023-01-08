@@ -144,6 +144,13 @@ inputs = [
     success: false,
     message: "User requested to unfollow not found",
   },
+  {
+    testcase_description: "Unfollow user with valid id but not present in DB",
+    follow_id: "63b97922215c8ab4f721aecf",
+    statusCode: 404,
+    success: false,
+    message: "Authenticated user is not following the requested id",
+  },
 ];
 
 inputs.forEach((input) => {
