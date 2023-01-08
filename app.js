@@ -23,3 +23,5 @@ app.use("/api", user);
 app.use("/api", post);
 
 export default app;
+
+app.use(ErrorMiddleware)
