@@ -35,16 +35,15 @@ describe("/POST Successful user authentication check", () => {
 
 let inputs = [
   {
-    describeText: "invalid password",
-    email: "abhay@gmail.com",
-    password: "Abhay123",
-    message: "Incorrect Password",
-  },
-  {
     describeText: "invalid email",
     email: "abhay1@gmail.com",
     password: "Abhay@123",
     message: "Incorrect Email",
+  }, {
+    describeText: "invalid password",
+    email: "abhay@gmail.com",
+    password: "Abhay123",
+    message: "Incorrect Password",
   },
 ];
 
@@ -72,21 +71,24 @@ inputs.forEach((input) => {
 });
 
 // Follow user
-inputs = [{
-  testcase_description: "Successful follow user check",
-  follow_id: "63b97922215c8ab4f721aecf",
-  statusCode: 200,
-  success: true,
-  message: "User followed successfully"
-}, {
-  testcase_description: "Follow user without id",
-  follow_id: "63b97922215c8ab4f721aec",
-  statusCode: 404,
-  success: false,
-  message: "Invalid Follow ID"
-}]
+inputs = [
+  {
+    testcase_description: "Successful follow user check",
+    follow_id: "63b97922215c8ab4f721aecf",
+    statusCode: 200,
+    success: true,
+    message: "User followed successfully",
+  },
+  {
+    testcase_description: "Follow user without id",
+    follow_id: "63b97922215c8ab4f721aec",
+    statusCode: 404,
+    success: false,
+    message: "Invalid Follow ID",
+  },
+];
 
-inputs.forEach(input => {
+inputs.forEach((input) => {
   describe(`POST ${input.testcase_description}`, () => {
     it("following user", (done) => {
       chai
@@ -94,7 +96,6 @@ inputs.forEach(input => {
         .post(`/api/follow/${input.follow_id}`)
         .set("Authorization", "Bearer " + process.env.SAMPLE_TOKEN)
         .end((err, res) => {
-          console.log(res.body);
           res.should.have.status(input.statusCode);
           res.body.should.be.a("object");
           res.body.should.be.have.property("success");
