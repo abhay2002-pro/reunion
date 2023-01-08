@@ -35,9 +35,15 @@ export const deletePost = catchAsyncError(async (req, res, next) => {
 
   const post_id = req.params.id;
 
+  if(!post_id) return next(new ErrorHandler("Post id is missing", 404));
+
+  const post = await Post.findOne({ _id });
+  if (!post) return next(new ErrorHandler("Post id is invalid", 404));
+
   await Post.deleteOne({ _id: post_id });
   res.status(200).json({
     success: true,
+    message: "Post deleted successfully"
   });
 });
 
