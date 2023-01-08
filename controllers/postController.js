@@ -14,7 +14,7 @@ export const addPost = catchAsyncError(async (req, res, next) => {
   const description = req.body.description;
 
   const post = await Post.create({ title, description, user });
-  res.status(200).json({
+  res.status(201).json({
     success: true,
     post_details: {
       post_id: post._id,
