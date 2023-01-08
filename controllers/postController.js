@@ -150,6 +150,10 @@ export const getAllPostsByUser = catchAsyncError(async (req, res, next) => {
 
   let posts = await Post.find({ user });
 
+  posts.sort(function(a,b){
+    return new Date(a.createdAt) - new Date(b.createdAt);
+  });
+
   posts = await Promise.all(
     posts.map(async (post) => {
       let comments = await Promise.all(
