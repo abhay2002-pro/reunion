@@ -55,6 +55,8 @@ export const unfollow = catchAsyncError(async (req, res, next) => {
   const user = await User.findOne({ _id });
   if (!user) return next(new ErrorHandler("Logged in user not found", 404));
 
+  if (!follower_id.match(/^[0-9a-fA-F]{24}$/)) return next(new ErrorHandler("Invalid Follow ID", 404));
+
   const follower_user = await User.findOne({ _id: follower_id });
   if (!follower_user)
     return next(new ErrorHandler("User requested to unfollow not found", 404));
@@ -74,6 +76,7 @@ export const unfollow = catchAsyncError(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
+    message: "User unfollowed successfully"
   });
 });
 
