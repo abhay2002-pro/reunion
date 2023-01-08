@@ -7,7 +7,7 @@ export const login = catchAsyncError(async (req, res, next) => {
   const password = req.body.password;
 
   const user = await User.findOne({ email });
-  if (!user) return next(new ErrorHandler("User not found", 404));
+  if (!user) return next(new ErrorHandler("Incorrect Email", 404));
 
   if (user.password !== password)
     return next(new ErrorHandler("Incorrect Password", 404));
