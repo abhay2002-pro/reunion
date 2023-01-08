@@ -115,3 +115,54 @@ testcases.forEach((testcase) => {
     });
   });
 });
+
+// Like a post
+testcases = [
+  {
+    describeText: "Post successful like check",
+    postId: "63badda97dee347e2f2b07dc",
+    statusCode: 200,
+    success: true,
+    message: "Post liked successfully",
+  },
+  {
+    describeText: "Post like post with invalid id",
+    postId: "63badda97dee347e2f2b07d",
+    statusCode: 404,
+    success: false,
+    message: "Post id is invalid",
+  },
+  {
+    describeText: "Post like post with valid post id but not present in DB",
+    postId: "63bacccd4d480a739c139347",
+    statusCode: 404,
+    success: false,
+    message: "Post not found",
+  },
+  {
+    describeText: "Post like already liked post",
+    postId: "63badda97dee347e2f2b07dc",
+    statusCode: 404,
+    success: false,
+    message: "Post already liked by user",
+  },
+];
+testcases.forEach((testcase) => {
+  describe(`${testcase.describeText}`, () => {
+    it("liking post", (done) => {
+      chai
+        .request(API)
+        .post(`/api/like/${testcase.postId}`)
+        .set("Authorization", "Bearer " + process.env.SAMPLE_TOKEN)
+        .end((err, res) => {
+          res.should.have.status(testcase.statusCode);
+          res.body.should.be.a("object");
+          res.body.should.be.have.property("success");
+          res.body.success.should.equal(testcase.success);
+          res.body.should.be.have.property("message");
+          res.body.message.should.equal(testcase.message);
+          done();
+        });
+    });
+  });
+});
