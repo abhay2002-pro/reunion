@@ -308,33 +308,55 @@ describe(`Get post details successfully`, () => {
   });
 });
 
-testcases = [{
+testcases = [
+  {
     describe: "Get post details with invalid id",
     postId: "63badda97dee347e2f2b07d",
     message: "Post id is invalid",
-}, {
+  },
+  {
     describe: "Get post details with valid id but not present in DB",
     postId: "63bacccd4d480a739c139347",
     message: "Post not found",
-}]
+  },
+];
 
-testcases.map((testcase)=>{
-    console.log(testcase)
-    describe(`${testcase.describe}`, () => {
-        it("getting post", (done) => {
-          chai
-            .request(API)
-            .get(`/api/posts/${testcase.postId}`)
-            .set("Authorization", "Bearer " + process.env.SAMPLE_TOKEN)
-            .end((err, res) => {
-              res.should.have.status(404);
-              res.body.should.be.a("object");
-              res.body.should.be.have.property("success");
-              res.body.success.should.equal(false);
-              res.body.should.be.have.property("message");
-              res.body.message.should.equal(testcase.message);
-              done();
-            });
+testcases.map((testcase) => {
+  console.log(testcase);
+  describe(`${testcase.describe}`, () => {
+    it("getting post", (done) => {
+      chai
+        .request(API)
+        .get(`/api/posts/${testcase.postId}`)
+        .set("Authorization", "Bearer " + process.env.SAMPLE_TOKEN)
+        .end((err, res) => {
+          res.should.have.status(404);
+          res.body.should.be.a("object");
+          res.body.should.be.have.property("success");
+          res.body.success.should.equal(false);
+          res.body.should.be.have.property("message");
+          res.body.message.should.equal(testcase.message);
+          done();
         });
-      });      
-})
+    });
+  });
+});
+
+// Get all posts
+describe(`Get post details of all posts successfully`, () => {
+  it("getting posts", (done) => {
+    chai
+      .request(API)
+      .get(`/api/all_posts/`)
+      .set("Authorization", "Bearer " + process.env.SAMPLE_TOKEN)
+      .end((err, res) => {
+        res.should.have.status(200);
+        res.body.should.be.a("object");
+        res.body.should.be.have.property("success");
+        res.body.success.should.equal(true);
+        res.body.should.be.have.property("posts");
+        res.body.posts.should.be.a("array");
+        done();
+      });
+  });
+});
