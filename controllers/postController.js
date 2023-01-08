@@ -40,7 +40,7 @@ export const deletePost = catchAsyncError(async (req, res, next) => {
   if (!post_id.match(/^[0-9a-fA-F]{24}$/)) return next(new ErrorHandler("Post id is invalid", 404));
 
   const post = await Post.findOne({ _id: post_id });
-  if (!post) return next(new ErrorHandler("Post id is invalid", 404));
+  if (!post) return next(new ErrorHandler("Post not found", 404));
 
   await Post.deleteOne({ _id: post_id });
   res.status(200).json({
@@ -55,6 +55,8 @@ export const likePost = catchAsyncError(async (req, res, next) => {
   if (!user) return next(new ErrorHandler("User not found", 404));
 
   const post_id = req.params.id;
+
+  if (!post_id.match(/^[0-9a-fA-F]{24}$/)) return next(new ErrorHandler("Post id is invalid", 404));
 
   const post = await Post.findOne({ _id: post_id });
   if (!post) return next(new ErrorHandler("Post not found", 404));
