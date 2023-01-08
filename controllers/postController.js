@@ -13,6 +13,8 @@ export const addPost = catchAsyncError(async (req, res, next) => {
   const title = req.body.title;
   const description = req.body.description;
 
+  if(!title) return next(new ErrorHandler("Title can't be empty", 404));
+  if(!description) return next(new ErrorHandler("Description can't be empty", 404));
   const post = await Post.create({ title, description, user });
   res.status(201).json({
     success: true,
