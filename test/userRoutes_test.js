@@ -107,3 +107,41 @@ inputs.forEach((input) => {
     });
   });
 });
+
+// Unfollow user
+inputs = [
+  {
+    testcase_description: "Successful unfollow user check",
+    follow_id: "63b97922215c8ab4f721aecf",
+    statusCode: 200,
+    success: true,
+    message: "User unfollowed successfully",
+  },
+  {
+    testcase_description: "Follow user without id",
+    follow_id: "63b97922215c8ab4f721aec",
+    statusCode: 404,
+    success: false,
+    message: "Invalid Follow ID",
+  },
+];
+
+inputs.forEach((input) => {
+  describe(`POST ${input.testcase_description}`, () => {
+    it("unfollowing user", (done) => {
+      chai
+        .request(API)
+        .post(`/api/unfollow/${input.follow_id}`)
+        .set("Authorization", "Bearer " + process.env.SAMPLE_TOKEN)
+        .end((err, res) => {
+          res.should.have.status(input.statusCode);
+          res.body.should.be.a("object");
+          res.body.should.be.have.property("success");
+          res.body.success.should.equal(input.success);
+          res.body.should.be.have.property("message");
+          res.body.message.should.equal(input.message);
+          done();
+        });
+    });
+  });
+});
