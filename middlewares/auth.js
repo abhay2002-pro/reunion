@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 
 export const isAuthenticated = catchAsyncError(async (req, res, next) => {
   const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
+  const token = authHeader.split(" ")[1];
 
   if (token == null) return next(new ErrorHandler("Not Logged In", 401));
 
