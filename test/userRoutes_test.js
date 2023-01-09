@@ -75,6 +75,7 @@ inputs = [
   {
     testcase_description: "successful follow user check",
     follow_id: "63b97922215c8ab4f721aecf",
+    token : process.env.SAMPLE_TOKEN,
     statusCode: 200,
     success: true,
     message: "User followed successfully",
@@ -82,6 +83,7 @@ inputs = [
   {
     testcase_description: "follow user with invalid id",
     follow_id: "63b97922215c8ab4f721aec",
+    token : process.env.SAMPLE_TOKEN,
     statusCode: 404,
     success: false,
     message: "Invalid Follow ID",
@@ -89,15 +91,24 @@ inputs = [
   {
     testcase_description: "follow user with valid id but not present in DB",
     follow_id: "63bac7be0de18dde5f73f1eb",
+    token : process.env.SAMPLE_TOKEN,
     statusCode: 404,
     success: false,
     message: "User requested to follow not found",
   },{
     testcase_description: "follow user is already being followed by the user",
     follow_id: "63b97922215c8ab4f721aecf",
+    token : process.env.SAMPLE_TOKEN,
     statusCode: 404,
     success: false,
     message: "User is already following the requested user",
+  },{
+    testcase_description: "follow user when not authenticated",
+    follow_id: "63b97922215c8ab4f721aecf",
+    token : "",
+    statusCode: 401,
+    success: false,
+    message: "Not Logged In",
   },
 ];
 
@@ -107,7 +118,7 @@ inputs.forEach((input) => {
       chai
         .request(API)
         .post(`/api/follow/${input.follow_id}`)
-        .set("Authorization", "Bearer " + process.env.SAMPLE_TOKEN)
+        .set("Authorization", "Bearer " + `${input.token}`)
         .end((err, res) => {
           res.should.have.status(input.statusCode);
           res.body.should.be.a("object");
@@ -138,14 +149,14 @@ inputs = [
     message: "Invalid Follow ID",
   },
   {
-    testcase_description: "Unfollow user with valid id but not present in DB",
+    testcase_description: "unfollow user with valid id but not present in DB",
     follow_id: "63bac7be0de18dde5f73f1eb",
     statusCode: 404,
     success: false,
     message: "User requested to unfollow not found",
   },
   {
-    testcase_description: "Unfollow user with valid id but not present in DB",
+    testcase_description: "unfollow user which is not followed by the user",
     follow_id: "63b97922215c8ab4f721aecf",
     statusCode: 404,
     success: false,
