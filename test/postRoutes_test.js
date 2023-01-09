@@ -76,7 +76,7 @@ testcases.forEach((testcase) => {
 testcases = [
   {
     describeText: "Delete successful deletion check",
-    postId: "63b99a15b1175dc7c933c0a8",
+    postId: "63bae8a0e20ab82b7855012c",
     statusCode: 200,
     success: true,
     message: "Post deleted successfully",
