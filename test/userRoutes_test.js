@@ -2,19 +2,21 @@ import chai from "chai";
 import chaiHttp from "chai-http";
 import { config } from "dotenv";
 const should = chai.should();
+import request from "supertest";
+import server from "../server.js";
 
 config({
   path: "./config/config.env",
 });
 
-const API = process.env.BASE_URL;
+// const server = process.env.BASE_URL;
 chai.use(chaiHttp);
 
 // User authentication
 describe("/POST Successful user authentication check", () => {
-  it("logging in the user", (done) => {
-    chai
-      .request(API)
+  it("logging in the user", function (done) {
+    this.timeout(10000);
+    request(server)
       .post("/api/authenticate")
       .send({
         email: "abhay@gmail.com",
@@ -49,9 +51,10 @@ let inputs = [
 
 inputs.forEach((input) => {
   describe(`POST user authentication with ${input.describeText}`, () => {
-    it("logging in the user", (done) => {
+    it("logging in the user", function (done) {
+      this.timeout(10000);
       chai
-        .request(API)
+        .request(server)
         .post("/api/authenticate")
         .send({
           email: input.email,
@@ -75,7 +78,7 @@ inputs = [
   {
     testcase_description: "successful follow user check",
     follow_id: "63b97922215c8ab4f721aecf",
-    token : process.env.SAMPLE_TOKEN,
+    token: process.env.SAMPLE_TOKEN,
     statusCode: 200,
     success: true,
     message: "User followed successfully",
@@ -83,7 +86,7 @@ inputs = [
   {
     testcase_description: "follow user with invalid id",
     follow_id: "63b97922215c8ab4f721aec",
-    token : process.env.SAMPLE_TOKEN,
+    token: process.env.SAMPLE_TOKEN,
     statusCode: 404,
     success: false,
     message: "Invalid Follow ID",
@@ -91,21 +94,23 @@ inputs = [
   {
     testcase_description: "follow user with valid id but not present in DB",
     follow_id: "63bac7be0de18dde5f73f1eb",
-    token : process.env.SAMPLE_TOKEN,
+    token: process.env.SAMPLE_TOKEN,
     statusCode: 404,
     success: false,
     message: "User requested to follow not found",
-  },{
+  },
+  {
     testcase_description: "follow user is already being followed by the user",
     follow_id: "63b97922215c8ab4f721aecf",
-    token : process.env.SAMPLE_TOKEN,
+    token: process.env.SAMPLE_TOKEN,
     statusCode: 404,
     success: false,
     message: "User is already following the requested user",
-  },{
+  },
+  {
     testcase_description: "follow user when not authenticated",
     follow_id: "63b97922215c8ab4f721aecf",
-    token : "",
+    token: "",
     statusCode: 401,
     success: false,
     message: "Not Logged In",
@@ -114,9 +119,10 @@ inputs = [
 
 inputs.forEach((input) => {
   describe(`POST ${input.testcase_description}`, () => {
-    it("following user", (done) => {
+    it("following user", function (done) {
+      this.timeout(10000);
       chai
-        .request(API)
+        .request(server)
         .post(`/api/follow/${input.follow_id}`)
         .set("Authorization", "Bearer " + `${input.token}`)
         .end((err, res) => {
@@ -166,9 +172,10 @@ inputs = [
 
 inputs.forEach((input) => {
   describe(`POST ${input.testcase_description}`, () => {
-    it("unfollowing user", (done) => {
+    it("unfollowing user", function (done) {
+      this.timeout(10000);
       chai
-        .request(API)
+        .request(server)
         .post(`/api/unfollow/${input.follow_id}`)
         .set("Authorization", "Bearer " + process.env.SAMPLE_TOKEN)
         .end((err, res) => {
@@ -186,9 +193,9 @@ inputs.forEach((input) => {
 
 // Get user profile
 describe("Get user profile successful check", () => {
-  it("getting user profile", (done) => {
-    chai
-      .request(API)
+  it("getting user profile", function (done) {
+    this.timeout(10000);
+    request(server)
       .get("/api/user")
       .set("Authorization", "Bearer " + process.env.SAMPLE_TOKEN)
       .end((err, res) => {

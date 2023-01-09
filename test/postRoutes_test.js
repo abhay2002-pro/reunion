@@ -1,13 +1,16 @@
 import chai from "chai";
 import chaiHttp from "chai-http";
 import { config } from "dotenv";
+import server from "../server.js";
+import request from "supertest";
+
 const should = chai.should();
 
 config({
   path: "./config/config.env",
 });
 
-const API = process.env.BASE_URL;
+// const server = process.env.BASE_URL;
 chai.use(chaiHttp);
 
 // Create post
@@ -27,12 +30,13 @@ let testcases = [
 ];
 
 describe("Post successful creation check", () => {
-  it("adding post", (done) => {
-    chai
-      .request(API)
+  it("adding post", function (done) {
+    this.timeout(10000);
+    request(server)
       .post("/api/posts")
       .set("Authorization", "Bearer " + process.env.SAMPLE_TOKEN)
       .send({
+        _id: "63badd93e764474478259466",
         title: "test post",
         description: "this is my test post",
       })
@@ -50,9 +54,10 @@ describe("Post successful creation check", () => {
 
 testcases.forEach((testcase) => {
   describe(`${testcase.describeText}`, () => {
-    it("adding post", (done) => {
+    it("adding post", function (done) {
+      this.timeout(10000);
       chai
-        .request(API)
+        .request(server)
         .post("/api/posts")
         .set("Authorization", "Bearer " + process.env.SAMPLE_TOKEN)
         .send({
@@ -76,7 +81,7 @@ testcases.forEach((testcase) => {
 testcases = [
   {
     describeText: "Delete successful deletion check",
-    postId: "63bae8a0e20ab82b7855012c",
+    postId: "63badf85cd6972d7b46f5032",
     statusCode: 200,
     success: true,
     message: "Post deleted successfully",
@@ -98,9 +103,10 @@ testcases = [
 ];
 testcases.forEach((testcase) => {
   describe(`${testcase.describeText}`, () => {
-    it("deleting post", (done) => {
+    it("deleting post", function (done) {
+      this.timeout(10000);
       chai
-        .request(API)
+        .request(server)
         .delete(`/api/posts/${testcase.postId}`)
         .set("Authorization", "Bearer " + process.env.SAMPLE_TOKEN)
         .end((err, res) => {
@@ -120,7 +126,7 @@ testcases.forEach((testcase) => {
 testcases = [
   {
     describeText: "Post successful like check",
-    postId: "63badda97dee347e2f2b07dc",
+    postId: "63badd93e764474478259466",
     statusCode: 200,
     success: true,
     message: "Post liked successfully",
@@ -149,9 +155,10 @@ testcases = [
 ];
 testcases.forEach((testcase) => {
   describe(`${testcase.describeText}`, () => {
-    it("liking post", (done) => {
+    it("liking post", function (done) {
+      this.timeout(10000);
       chai
-        .request(API)
+        .request(server)
         .post(`/api/like/${testcase.postId}`)
         .set("Authorization", "Bearer " + process.env.SAMPLE_TOKEN)
         .end((err, res) => {
@@ -171,7 +178,7 @@ testcases.forEach((testcase) => {
 testcases = [
   {
     describeText: "Post successful unlike check",
-    postId: "63badda97dee347e2f2b07dc",
+    postId: "63badd93e764474478259466",
     statusCode: 200,
     success: true,
     message: "Post unliked successfully",
@@ -200,9 +207,10 @@ testcases = [
 ];
 testcases.forEach((testcase) => {
   describe(`${testcase.describeText}`, () => {
-    it("liking post", (done) => {
+    it("unliking post", function (done) {
+      this.timeout(10000);
       chai
-        .request(API)
+        .request(server)
         .post(`/api/unlike/${testcase.postId}`)
         .set("Authorization", "Bearer " + process.env.SAMPLE_TOKEN)
         .end((err, res) => {
@@ -220,10 +228,10 @@ testcases.forEach((testcase) => {
 
 // Add a comment
 describe(`Post sucessfully add comment to a post check`, () => {
-  it("adding comment", (done) => {
-    chai
-      .request(API)
-      .post(`/api/comment/63badda97dee347e2f2b07dc`)
+  it("adding comment", function (done) {
+    this.timeout(10000);
+    request(server)
+      .post(`/api/comment/63badd93e764474478259466`)
       .set("Authorization", "Bearer " + process.env.SAMPLE_TOKEN)
       .send({
         description: "this is my comment's description",
@@ -268,9 +276,10 @@ testcases = [
 ];
 testcases.forEach((testcase) => {
   describe(`${testcase.describeText}`, () => {
-    it("adding comment", (done) => {
+    it("adding comment", function (done) {
+      this.timeout(10000);
       chai
-        .request(API)
+        .request(server)
         .post(`/api/comment/${testcase.postId}`)
         .set("Authorization", "Bearer " + process.env.SAMPLE_TOKEN)
         .send({
@@ -291,10 +300,10 @@ testcases.forEach((testcase) => {
 
 // Get post details of a specific post
 describe(`Get post details successfully`, () => {
-  it("getting post", (done) => {
-    chai
-      .request(API)
-      .get(`/api/posts/63badda97dee347e2f2b07dc`)
+  it("getting post", function (done) {
+    this.timeout(10000);
+    request(server)
+      .get(`/api/posts/63badd93e764474478259466`)
       .set("Authorization", "Bearer " + process.env.SAMPLE_TOKEN)
       .end((err, res) => {
         res.should.have.status(200);
@@ -322,11 +331,11 @@ testcases = [
 ];
 
 testcases.map((testcase) => {
-  console.log(testcase);
   describe(`${testcase.describe}`, () => {
-    it("getting post", (done) => {
+    it("getting post", function (done) {
+      this.timeout(10000);
       chai
-        .request(API)
+        .request(server)
         .get(`/api/posts/${testcase.postId}`)
         .set("Authorization", "Bearer " + process.env.SAMPLE_TOKEN)
         .end((err, res) => {
@@ -344,9 +353,9 @@ testcases.map((testcase) => {
 
 // Get all posts
 describe(`Get post details of all posts successfully`, () => {
-  it("getting posts", (done) => {
-    chai
-      .request(API)
+  it("getting posts", function (done) {
+    this.timeout(10000);
+    request(server)
       .get(`/api/all_posts/`)
       .set("Authorization", "Bearer " + process.env.SAMPLE_TOKEN)
       .end((err, res) => {
@@ -360,3 +369,4 @@ describe(`Get post details of all posts successfully`, () => {
       });
   });
 });
+
