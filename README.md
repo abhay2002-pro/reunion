@@ -83,3 +83,4 @@ Run the application
 
 **Database:** Mongo DB
 
+**Tests:** Chai and Mocha
